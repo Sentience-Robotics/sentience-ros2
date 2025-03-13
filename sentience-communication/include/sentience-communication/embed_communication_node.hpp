@@ -2,6 +2,10 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include <boost/asio.hpp>
+#include <iostream>
+#include <typeinfo>
+#include <queue>
+#include <cstddef>
 
 class EmbedCommunicationNode : public rclcpp::Node {
 private:
