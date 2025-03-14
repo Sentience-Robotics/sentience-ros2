@@ -63,12 +63,10 @@ void EmbedCommunicationNode::alive() {
     RCLCPP_INFO(this->get_logger(), "Alive");
 }
 
-void EmbedCommunicationNode::configureSerialPort(boost::asio::serial_port& port, std::string portname, uint16_t baudRate) {
-    port.open(portname);
-    port.set_option(boost::asio::serial_port_base::baud_rate(baudRate));
-}
-
 int main(int ac, char **av) {
+    for (int i = 0; i < ac; i++) {
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Argument %d: %s", i, av[i]);
+    }
     rclcpp::init(ac, av);
     rclcpp::spin(std::make_shared<EmbedCommunicationNode>());
     rclcpp::shutdown();

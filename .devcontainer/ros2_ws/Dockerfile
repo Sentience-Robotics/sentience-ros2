@@ -1,7 +1,14 @@
-FROM ubuntu:22.04
+FROM ubuntu:jammy
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG ROS_DISTRO=humble
+ARG USERNAME=rosdev
+ARG UID=1000
+ARG GID=$UID
+
+# Set the locale
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 # Install some dependencies packages
 RUN apt update -q && \
@@ -19,17 +26,7 @@ RUN add-apt-repository universe && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
     apt update -q && \
     apt upgrade -q -y && \
-    apt install -y ros-humble-desktop ros-humble-ros-gz
-
-ARG USERNAME=rosdev
-ARG UID=1000
-ARG GID=$UID
-
-# Install gazebo
-# RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
-#     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
-#     apt update -q && \
-#     apt install -y ignition-fortress
+    apt install -y ros-humble-desktop ros-humble-ros-gz ros-dev-tools
 
 # Create and switch to user
 RUN groupadd -g $GID $USERNAME \
@@ -37,12 +34,10 @@ RUN groupadd -g $GID $USERNAME \
     && echo "$USERNAME ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Setup zsh
-RUN touch /home/$USERNAME/.zshrc
-RUN chsh -s /bin/zsh $USERNAME
+RUN touch /home/$USERNAME/.zshrc && \
+    chsh -s /bin/zsh $USERNAME
 ENV SHELL=/bin/zsh
-
 USER $USERNAME
-
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Create workspace so that user own this directory
