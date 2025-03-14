@@ -6,8 +6,8 @@
     "dockerfile": "Dockerfile",
     "args": {
       "USERNAME": "rosdev",
-      "UID": "${localUid}",
-      "GID": "${localGid}"
+      "UID": "1001",
+      "GID": "1001"
     }
   },
 
@@ -37,8 +37,10 @@
     "--net=host",
     "--pid=host",
     "--ipc=host",
-    "-e", "DISPLAY=${DISPLAY}", "-v", "/tmp/.X11-unix:/tmp/.X11-unix:rw",
-    "-v", "/dev/bus/usb:/dev/bus/usb"
+    "-e", "DISPLAY=${localEnv:DISPLAY}"
   ],
-  "mounts": []
+  "mounts": [
+    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind",
+    "source=/dev/bus/usb,target=/dev/bus/usb,type=bind"
+  ]
 }

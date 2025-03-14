@@ -2,9 +2,6 @@ FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG ROS_DISTRO=humble
-ARG USERNAME=rosdev
-ARG UID=1000
-ARG GID=$UID
 
 # Install some dependencies packages
 RUN apt update -q && \
@@ -16,13 +13,17 @@ RUN apt update -q && \
     libboost-all-dev && \
     apt-get clean
 
-# Install ROS2
+# Install ROS2 & Gazebo
 RUN add-apt-repository universe && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
     apt update -q && \
     apt upgrade -q -y && \
     apt install -y ros-humble-desktop ros-humble-ros-gz
+
+ARG USERNAME=rosdev
+ARG UID=1000
+ARG GID=$UID
 
 # Install gazebo
 # RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
